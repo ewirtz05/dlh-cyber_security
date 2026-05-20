@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo -u "$1" bash
+echo "$1" ALL=(ALL) NOPASSWD: ALL"
