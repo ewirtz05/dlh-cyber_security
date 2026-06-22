@@ -1,6 +1,6 @@
 {
-  "tls_1_0_supported": "no",
-  "tls_1_1_supported": "no",
+  "tls_1_0_supported": "yes",
+  "tls_1_1_supported": "yes",
   "tls_1_2_supported": "yes",
   "tls_1_3_supported": "yes",
   "tls_1_2_cipher": "ECDHE-ECDSA-CHACHA20-POLY1305",
