@@ -1,2 +1,2 @@
 #!/bin/bash
-subfinder -d "$1" -silent > subdomains.txt
+subfinder -d "$1" -silent -oI > subdomains.txt
