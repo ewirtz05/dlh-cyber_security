@@ -2,13 +2,13 @@
 
 ## Objective
 
-The objective of this task was to gather as much passive reconnaissance information as possible about the domain `holbertonschool.com` using Shodan.
+The objective of this task was to gather as much information as possible about the `holbertonschool.com` domain using Shodan.
 
-The requested information includes:
+The focus of the reconnaissance was:
 
-* IP ranges and IP addresses related to `holbertonschool.com`
-* Technologies and frameworks used by subdomains of `holbertonschool.com`
-* Notes written as a markdown report
+* Collecting IP addresses and IP ranges related to `holbertonschool.com`
+* Identifying technologies and frameworks used across subdomains
+* Writing the collected notes in markdown format
 
 ## Target Domain
 
@@ -19,124 +19,135 @@ holbertonschool.com
 ## Tool Used
 
 ```text
-Shodan CLI
+Shodan
 ```
 
-Shodan is a search engine for internet-connected systems. It can be used during passive reconnaissance to identify publicly exposed services, open ports, TLS certificate data, hostnames, IP addresses, and detected technologies without directly scanning the target.
+Shodan was used as a passive reconnaissance tool to identify public information about hosts, services, certificates, HTTP headers, technologies, and infrastructure related to `holbertonschool.com`.
 
-## Shodan CLI Status
+## Shodan Search Queries Used
 
-The Shodan CLI was configured and tested with the following command:
-
-```bash
-shodan info
-```
-
-The command returned:
+The following searches were used on the Shodan website:
 
 ```text
-Query credits available: 0
-Scan credits available: 0
+hostname:holbertonschool.com
+ssl.cert.subject.cn:holbertonschool.com
+ssl.cert.subject.alt_names:holbertonschool.com
 ```
 
-This confirms that the Shodan CLI was initialized successfully, but the account had no available query credits.
+## IP Addresses Found
 
-## Shodan Commands Attempted
+The following IP addresses were visible in the Shodan results for `holbertonschool.com` and its related subdomains:
 
-The following Shodan commands were used or prepared to gather information about `holbertonschool.com`:
+| IP Address    | Organization / Provider | Notes                                              |
+| ------------- | ----------------------- | -------------------------------------------------- |
+| 18.188.10.153 | Amazon.com / AWS        | Associated with Holberton School related hostnames |
+| 52.14.14.24   | Amazon.com / AWS        | Associated with Holberton School related hostnames |
+| 51.15.213.103 | Scaleway / Online SAS   | Shown as a Holberton-related Shodan host result    |
 
-```bash
-shodan domain holbertonschool.com
-shodan search ssl.cert.subject.cn:holbertonschool.com
-shodan search hostname:holbertonschool.com
-shodan search org:Holberton
-```
+## IP Ranges / Infrastructure Notes
 
-## Shodan Results
+The visible Shodan results show that the domain uses cloud-hosted infrastructure.
 
-Each Shodan query returned the following error:
+| Provider              | Related IPs                | Notes                                                     |
+| --------------------- | -------------------------- | --------------------------------------------------------- |
+| Amazon.com / AWS      | 18.188.10.153, 52.14.14.24 | Hosts related to `holbertonschool.com` and its subdomains |
+| Scaleway / Online SAS | 51.15.213.103              | Additional host result related to the reconnaissance      |
 
-```text
-Error: Access denied (403 Forbidden)
-```
+No full CIDR ranges were visible in the screenshot. Therefore, the collected information is limited to the individual IP addresses and their visible hosting providers.
 
-The reason for this limitation was the account status:
+## Subdomains / Hostnames Found
 
-```text
-Query credits available: 0
-```
-
-Because the Shodan account had no available query credits, Shodan did not return domain, hostname, IP range, service, or technology results.
-
-## IP Ranges and IP Addresses
-
-No confirmed IP ranges or IP addresses could be collected from Shodan because access to Shodan search results was denied.
-
-The following information should be collected once Shodan query credits are available:
-
-* Public IP addresses hosting `holbertonschool.com`
-* Public IP addresses linked to subdomains
-* Related IP ranges
-* ASN information
-* Hosting provider or cloud provider information
-* Exposed ports and services
-* Service banners
-
-## Subdomains to Investigate
-
-The following Holberton-related hostnames and subdomains should be investigated with Shodan once query access is available:
+The following hostnames and subdomains were visible in the Shodan results:
 
 ```text
 holbertonschool.com
 www.holbertonschool.com
 blog.holbertonschool.com
 apply.holbertonschool.com
-intranet.holbertonschool.com
 ```
 
-Useful Shodan filters for this step include:
+Additional Shodan result titles also showed Holberton-related web portals and forum pages.
 
-```bash
-shodan search hostname:holbertonschool.com
-shodan search ssl.cert.subject.cn:holbertonschool.com
-shodan search ssl.cert.subject.alt_names:holbertonschool.com
+## Technologies and Frameworks Found
+
+The following technologies, services, and HTTP security headers were visible in the Shodan results:
+
+| Technology / Header             | Description                                         |
+| ------------------------------- | --------------------------------------------------- |
+| HTTPS                           | Secure web service exposed on port 443              |
+| SSL Certificate                 | SSL/TLS certificate information available in Shodan |
+| nginx                           | Web server detected in HTTP response headers        |
+| HTTP 200 OK                     | Some hosts returned successful HTTP responses       |
+| HTTP 301 / 302 Redirect         | Some hosts redirected to another page or hostname   |
+| X-Frame-Options: SAMEORIGIN     | Clickjacking protection header                      |
+| X-XSS-Protection: 1; mode=block | Legacy browser XSS protection header                |
+| X-Content-Type-Options: nosniff | Prevents MIME type sniffing                         |
+| X-Download-Options: noopen      | Browser download protection header                  |
+
+## Technologies by Hostname
+
+| Hostname / Subdomain                                      | IP Address    | Technologies / Observations                           |
+| --------------------------------------------------------- | ------------- | ----------------------------------------------------- |
+| holbertonschool.com                                       | 18.188.10.153 | HTTPS, SSL certificate, nginx, HTTP redirect          |
+| [www.holbertonschool.com](http://www.holbertonschool.com) | 18.188.10.153 | HTTPS, SSL certificate, nginx, HTTP redirect          |
+| blog.holbertonschool.com                                  | 52.14.14.24   | HTTPS, SSL certificate, nginx, HTTP 200 OK            |
+| apply.holbertonschool.com                                 | 52.14.14.24   | HTTPS, SSL certificate, nginx, HTTP 200 OK            |
+| Holberton School web portal                               | 51.15.213.103 | HTTPS, SSL certificate, Holberton-related web service |
+
+## HTTP Headers Observed
+
+The following HTTP headers were visible in the Shodan results:
+
+```text
+Server: nginx
+X-Frame-Options: SAMEORIGIN
+X-XSS-Protection: 1; mode=block
+X-Content-Type-Options: nosniff
+X-Download-Options: noopen
 ```
 
-## Technologies and Frameworks
+These headers indicate that the web applications use basic browser-side security protections.
 
-No confirmed technologies or frameworks could be collected from Shodan because the queries returned `403 Forbidden`.
+## Services Observed
 
-The following technology categories should be collected from Shodan results when query access is available:
+The Shodan results mainly showed web services.
 
-* Web server software
-* HTTP and HTTPS services
-* TLS certificate information
-* CDN or reverse proxy usage
-* Cloud hosting provider
-* JavaScript frameworks
-* CMS or web application framework
-* Exposed service banners
-* Open ports
-* Security headers
-* Related hostnames
-* SSL/TLS certificate subject and SAN entries
+| Port / Service | Notes                                             |
+| -------------- | ------------------------------------------------- |
+| HTTP           | Web service with redirects and HTTP responses     |
+| HTTPS          | TLS-enabled web service with SSL certificate data |
 
 ## Passive Reconnaissance Notes
 
-The reconnaissance remained passive. No exploitation, brute forcing, vulnerability scanning, or direct attack was performed.
+The reconnaissance was performed passively using Shodan.
 
-The main limitation encountered was the Shodan account restriction. Although the Shodan CLI was initialized, the account had zero query credits, which caused Shodan to block all search queries with `403 Forbidden`.
+No exploitation, brute forcing, vulnerability scanning, or active attacks were performed against the target domain.
+
+The collected results show that `holbertonschool.com` uses cloud infrastructure, mainly Amazon Web Services, and exposes web services using HTTPS. The visible HTTP headers indicate the use of nginx and common web security headers.
 
 ## Conclusion
 
-The Shodan CLI was correctly configured, but the account did not have query credits available. As a result, Shodan search queries for `holbertonschool.com` could not return IP ranges, related hosts, detected technologies, or service information.
+Shodan results for `holbertonschool.com` showed multiple related hosts and subdomains, including `www.holbertonschool.com`, `blog.holbertonschool.com`, and `apply.holbertonschool.com`.
 
-Once Shodan query credits are available, the prepared commands can be rerun to collect real results for:
+The infrastructure appears to use cloud hosting providers such as AWS and Scaleway. The main technologies observed were HTTPS, SSL/TLS certificates, nginx, HTTP redirects, and several HTTP security headers.
 
-* IP ranges and IP addresses
-* Subdomains
-* Open ports
-* Detected technologies
-* TLS certificate data
-* Hosting and ASN information
-* Service banners
+The main IP addresses identified were:
+
+```text
+18.188.10.153
+52.14.14.24
+51.15.213.103
+```
+
+The main technologies identified were:
+
+```text
+HTTPS
+SSL/TLS
+nginx
+HTTP redirects
+X-Frame-Options
+X-XSS-Protection
+X-Content-Type-Options
+X-Download-Options
+```
