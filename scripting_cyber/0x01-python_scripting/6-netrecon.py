@@ -16,7 +16,7 @@ def dns_recon(domain):
 	print("=== DNS Reconnaissance ===")
 
 	try:
-		ip = socket.gethostsbyname(domain)
+		ip = socket.gethostbyname(domain)
 		print(f"IP Address: {ip}")
 	except socket.gaierror:
 		print("IP Address: Could not resolve domain")
@@ -67,7 +67,7 @@ def web_recon(domain):
 		print(f"Number of Links: {len(links)}")
 
 	except requests.exceptions.RequestException as error:
-		print("Web request failed: {error}")
+		print(f"Web request failed: {error}")
 
 	print()
 
