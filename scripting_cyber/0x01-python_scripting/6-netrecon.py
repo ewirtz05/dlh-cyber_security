@@ -9,6 +9,8 @@ import subprocess
 import requests
 from bs4 import BeautifulSoup
 
+# import dns
+
 def dns_recon(domain):
 	"""Resolve domain IP adress and retrieve MX records"""
 	print("=== DNS Reconnaissance ===")
