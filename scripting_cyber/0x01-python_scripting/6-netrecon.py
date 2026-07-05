@@ -5,27 +5,40 @@ Combines DNS Lookup, web reconnaissance, simple TCP port checking
 """
 
 import socket
+import subprocess
 import requests
 from bs4 import BeautifulSoup
-import dns.resolver
 
 def dns_recon(domain):
 	"""Resolve domain IP adress and retrieve MX records"""
 	print("=== DNS Reconnaissance ===")
 
 	try:
-		ip_address = socket.gethostbyname(domain)
-		print(f"IP Address: {ip_address}")
+		ip = socket.gethostsbyname(domain)
+		print(f"IP Address: {ip}")
 	except socket.gaierror:
 		print("IP Address: Could not resolve domain")
 
+	print("MX Records:")
 	try:
-		mx_records = dns.resolver.resolve(domain, "MX")
-		print ("MX Records:")
-		for record in mx_records:
-			print(f" {record.exchange} priority {record.preference}")
+		result = subprocess.run(
+			["nslookup", "-type=MX", domain],
+			capture_output=True,
+			text=True,
+			timeout=5
+		)
+
+		found = False
+		for line in result.stdout.splitlines():
+			if "mail exchanger" in line.lower() or "mx preference" in line.lower():
+				print(line.strip())
+				found = True
+
+		if not found:
+			print("No MX records found")
+
 	except Exception:
-		print("MX Records: Could not retrieve")
+		print("Could not retrieve MX records")
 
 	print()
 
@@ -88,13 +101,18 @@ def port_scan(domain):
 
 	print()
 
-if __name__ == "__main__":
-	target_domain = "google.com"
+def main():
+	"""Run the full reconnaissance script"""
+	domain = input().strip()
 
-	print(f"Reconnaissance Report for {target_domain}")
-	print("=" * 40)
+	print("NETWORK RECONNAISSANCE TOOL")
+	print("===========================")
+	print(f"Target: {domain}")
 	print()
 
-	dns_recon(target_domain)
-	web_recon(target_domain)
-	port_scan(target_domain)
+	dns_recon(domain)
+	web_recon(domain)
+	port_scan(domain)
+
+if __name__ == "__main__":
+	main()
