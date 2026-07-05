@@ -2,7 +2,7 @@
 
 import socket
 
-def resolve_domain_to_ip4(domain_name):
+def resolve_domain_to_ipv4(domain_name):
 	"""
 	Resolve a domain name to its IPv4 address
 	
