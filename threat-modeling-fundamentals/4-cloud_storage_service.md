@@ -1,4 +1,4 @@
-# Task 24.4 - Cloud Storage Service
+# Cloud Storage Service Threat Model
 
 ## System Overview
 
