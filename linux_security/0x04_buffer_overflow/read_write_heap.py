@@ -24,16 +24,15 @@ def find_in_range(fd, start, end, needle):
         if offset != -1:
             return address - len(tail) + offset
 
-        tail = data[-overlap:]
+        tail = data[-overlap:] if overlap else b""
         address += len(chunk)
 
     return None
 
 
 def replace_in_heap(pid, search, replacement):
-    """Replace the first NUL-terminated match and return its address."""
-    needle = search + b"\0"
-    payload = replacement.ljust(len(needle), b"\0")
+    """Replace the first byte match and return its address."""
+    payload = replacement.ljust(len(search), b"\0")
     proc_path = "/proc/{}".format(pid)
     proc_fd = os.open(proc_path, os.O_RDONLY | os.O_DIRECTORY)
 
@@ -55,11 +54,11 @@ def replace_in_heap(pid, search, replacement):
 
                 bounds = fields[0].split(b"-", 1)
                 start, end = (int(bound, 16) for bound in bounds)
-                address = find_in_range(fd, start, end, needle)
+                address = find_in_range(fd, start, end, search)
                 if address is None:
                     continue
 
-                if os.pread(fd, len(needle), address) != needle:
+                if os.pread(fd, len(search), address) != search:
                     raise OSError("Heap contents changed before the write")
                 if os.pwrite(fd, payload, address) != len(payload):
                     raise OSError("Incomplete write to the heap")
@@ -72,9 +71,11 @@ def replace_in_heap(pid, search, replacement):
 
 def main(args):
     """Validate arguments, replace the string, and return a status."""
+    if len(args) != 3:
+        print("Usage: read_write_heap.py pid search_string replace_string")
+        return 1
+
     try:
-        if len(args) != 3:
-            raise ValueError("Expected PID, search string and replacement")
         pid_text, search_text, replacement_text = args
         if not pid_text or pid_text.strip("0123456789"):
             raise ValueError("PID must be a positive integer")
@@ -101,7 +102,8 @@ def main(args):
         print("Error: {}".format(error))
         return 1
 
-    print("Replaced string at {:#x} in PID {}".format(address, pid))
+    if os.environ.get("RWH_VERBOSE") is not None:
+        print("Replaced string at {:#x} in PID {}".format(address, pid))
     return 0
 
 

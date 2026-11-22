@@ -2,9 +2,9 @@
 
 ## 0. Hack the VM
 
-`read_write_heap.py` finds the first NUL-terminated ASCII match in a
-running Linux process's writable `[heap]` mapping and replaces it in
-place. It uses `/proc/PID/maps` to locate the heap and `/proc/PID/mem`
+`read_write_heap.py` finds the first matching sequence of ASCII bytes
+in a running Linux process's writable `[heap]` mapping and replaces it
+in place. It uses `/proc/PID/maps` to locate the heap and `/proc/PID/mem`
 to read and write it.
 
 ```sh
@@ -23,5 +23,5 @@ permissions to access the process.
 sudo ./read_write_heap.py 6515 Holberton maroua
 ```
 
-The script prints the address on success. Usage errors go to stdout
-and exit with status 1.
+The script is silent on success. Set `RWH_VERBOSE=1` to print the
+replacement address. Usage errors go to stdout and exit with status 1.
